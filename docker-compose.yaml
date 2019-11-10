@@ -1,0 +1,71 @@
+version: '3.0'
+services:
+  rabbitmq:
+    hostname: rabbitmq
+    container_name: rabbitmq_rb
+    image: rabbitmq:3.7-management
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "12345678"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  phoenix_api:  
+    build: phoenix/
+    ports:
+      - "5000:5000"
+    # volumes:
+    #    - app:/code/app
+    depends_on: 
+      - rabbitmq
+    links:
+      - rabbitmq
+    environment:
+      BROKER_URL: 'amqp://admin:12345678@rabbitmq_rb/'
+
+  mail_service:
+    build: mail_service/
+    hostname: mail_service
+    command: sh ../run_mail_service.sh
+    depends_on: 
+      - rabbitmq
+    links:
+      - rabbitmq
+    volumes:
+      - ./mail_service/app/:/code/app/
+    environment:
+      BROKER_URL: 'amqp://admin:12345678@rabbitmq_rb/'
+
+  user_microservice:
+    build: user_microservice/
+    hostname: user_microservice
+    command: sh ../user_microservice.sh
+    depends_on: 
+      - rabbitmq
+    links:
+      - rabbitmq
+    volumes:
+      - ./user_microservice/app/:/code/app/
+    environment:
+      BROKER_URL: 'amqp://admin:12345678@rabbitmq_rb/'
+      DATABASE: 'production.db'      
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+        - "14269"
+        - "14268:14268"
+        - "14267"
+        - "14250"
+        - "9411:9411"
+        - "16686:16686"
+        - "16687"
+        - "5775:5775/udp"
+        - "6831:6831/udp"
+        - "6832:6832/udp"
+        - "5778:5778"
+    environment:
+        - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+        - LOG_LEVEL=debug
+    restart: on-failure
