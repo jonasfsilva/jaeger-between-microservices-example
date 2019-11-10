@@ -1,6 +1,7 @@
-# Liftit Teste
+# Flask RabbitMQ, Jaeger Tracer, Microservices 
 
-Liftit Teste
+Flask RabbitMQ, Jaeger Tracer, Microservices 
+
 
 # Como Testar a Aplicação
 
@@ -25,17 +26,10 @@ Liftit Teste
 
     - Python
     - Flask, FlaskRestplus
+    - Jaeger
     - RabbitMQ
     - Docker
     - Docker-compose
 
 # Fluxo da Aplicação
 ![alt text](./fluxo.jpg)
-
-
-# O que melhoraria:
-    - Criar Pacote para as funções de conexão e utilidades do AMQP para um Pypi Server Local
-    - Testaria as conexões com rabbitmq, saidas de email, e envio e recebimentos de mensagens
-    - Deixaria o prefixo base /api/{version} para o API Management
-    - Usaria um API Gateway para orquestração e um Edge Router em Produção
-    - Salvaria os dados necessarios para os microserviços em bancos Nosql para autonomia dos serviços (com redundancia)
